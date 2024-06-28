@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat UI</title>
+    <style>
+        body {
+            background-color: #e5e5e7;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .chat-container {
+            width: 750px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        .time-stamp {
+            text-align: center;
+            color: #fff;
+            background-color: #4aba7a;
+            padding: 5px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            font-size: 28px;
+            /* 约37.33px */
+            margin: 20px 0;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .message.left .avatar {
+            order: 0;
+            margin-right: 15px;
+        }
+
+        .message.left .text-bubble {
+            order: 1;
+        }
+
+        .message.right .avatar {
+            order: 1;
+            margin-left: 15px;
+        }
+
+        .message.right .text-bubble {
+            order: 0;
+        }
+
+        .avatar {
+            width: 90px;
+            /* 约90px */
+            height: 90px;
+            /* 约90px */
+            border-radius: 50%;
+            background-color: #ccc;
+        }
+
+        .text-bubble {
+            max-width: 530px;
+            /* 约530px */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            font-size: 30px;
+            /* 约40px */
+        }
+
+        .text-bubble.left {
+            background-color: #fff;
+            border: 1px solid #e5e5e5;
+        }
+
+        .text-bubble.right {
+            background-color: #97ec8a;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="time-stamp">10:01</div>
+        <div class="message left">
+            <img src="avatar1.png" alt="Avatar" class="avatar">
+            <div class="text-bubble left">
+                到这里就变成22分钟5站了
+            </div>
+        </div>
+        <div class="time-stamp">08:05</div>
+        <div class="message right">
+            <div class="text-bubble right">
+                要等20分钟啊
+            </div>
+            <img src="avatar2.png" alt="Avatar" class="avatar">
+        </div>
+        <div class="message right">
+            <div class="text-bubble right">
+                白去这么早了
+            </div>
+            <img src="avatar2.png" alt="Avatar" class="avatar">
+        </div>
+        <div class="message left">
+            <img src="avatar1.png" alt="Avatar" class="avatar">
+            <div class="text-bubble left">
+                嗯，还在延长。刚是15分钟4站。现在又变成17分钟4站了
+            </div>
+        </div>
+        <div class="time-stamp">08:11</div>
+        <div class="message left">
+            <img src="avatar1.png" alt="Avatar" class="avatar">
+            <div class="text-bubble left">
+                现在又直接变20了
+            </div>
+        </div>
+        <div class="time-stamp">08:26</div>
+        <div class="message right">
+            <div class="text-bubble right">
+                在家休息吧
+            </div>
+            <img src="avatar2.png" alt="Avatar" class="avatar">
+        </div>
+        <div class="message left">
+            <img src="avatar1.png" alt="Avatar" class="avatar">
+            <div class="text-bubble left">
+                我这把伞漏雨(⊙ᗜ⊙)
+            </div>
+        </div>
+        <div class="message right">
+            <div class="text-bubble right">
+                金店送的
+            </div>
+            <img src="avatar2.png" alt="Avatar" class="avatar">
+        </div>
+    </div>
+</body>
+
+</html>
