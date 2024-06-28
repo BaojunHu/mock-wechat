@@ -3,61 +3,9 @@
 		<scroll-view class="scroll-view" :style="{ height: `${windowHeight - inputHeight}rpx` }" id="scrollview"
 			scroll-y="true" :scroll-top="scrollTop" @scrolltoupper="topRefresh" @click="touchClose">
 			<view id="msglistview" class="chat-body">
-				<view v-for="(item, index) in msgList" :key="index">
-					<view class="msg-time" v-if="item.isShowTime">
-						{{ changeTime(item.sendTime) }}
-					</view>
-					<view class="item self" v-if="item.sendUserId == userId">
-						<view class="msg-menu menu-right" :style="{ display: showBoxId == item.id ? 'block' : 'none' }">
-							<view class="tr-icon tr-icon-right"></view>
-							<ChatMsgMenu :msgUserId="item.sendUserId" :msgId="item.id" :content="item.content"
-								:msgSortId="index" :time="item.sendTime" @cancelMsg="cancelMsg" />
-						</view>
-						<view @longpress="showBoxId = item.id">
-							<view class="content-text right" v-if="item.type == 'text'">
-								{{ item.content }}
-							</view>
-							<view class="content-text right" v-else-if="item.type == 'voice'">
-								<view style="display: flex;" @click="playSound(item.content)">
-									<text>{{ item.soundTIme }}''</text>
-									<Icon class="ml-10" name="voice-left" size="32" />
-								</view>
-							</view>
-							<view class="content-img" v-else-if="item.type == 'img'">
-								<img class="img-style" :src="item.content" mode="widthFix" :lazy-load="true" />
-							</view>
-							<view class="content-video" v-else-if="item.type === 'voide'">
-								<video class="video-style" :src="item.content" />
-							</view>
-						</view>
-						<img class="avatar" :src="item.wxUser.headImg" />
-					</view>
-					<view class="item Ai" v-else>
-						<img class="avatar" :src="item.wxUser.headImg" />
-						<view @longpress="showBoxId = item.id">
-							<view class="content-text left" v-if="item.type == 'text'">
-								{{ item.content }}
-							</view>
-							<view class="content-text left" v-else-if="item.type == 'voice'">
-								<view style="display: flex;" @click="playSound(item.content)">
-									<Icon class=" mr-10" name="voice-right" size="32" />
-									<text>{{ item.soundTIme }}''</text>
-								</view>
-							</view>
-							<view class="content-img" v-else-if="item.type == 'img'">
-								<img class="img-style" :src="item.content" mode="widthFix" :lazy-load="true" />
-							</view>
-							<view class="content-video" v-else-if="item.type === 'voide'">
-								<video class="video-style" :src="item.content" />
-							</view>
-						</view>
-						<view class="msg-menu menu-left" :style="{ display: showBoxId == item.id ? 'block' : 'none' }">
-							<view class="tr-icon tr-icon-left"></view>
-							<ChatMsgMenu :msgUserId="item.sendUserId" :msgId="item.id" :content="item.content"
-								:msgSortId="index" :time="item.sendTime" @cancelMsg="cancelMsg" />
-						</view>
-					</view>
-				</view>
+
+				<ChatContent v-for="(item, index) in msgList" :key="item.sendUserId" :item="item" :userId="userId"
+					v-model:showBoxId="showBoxId" :index="index" :cancelMsg="cancelMsg" />
 			</view>
 		</scroll-view>
 		<view class="chat-bottom" :style="{ height: `${inputHeight}rpx` }">
@@ -121,7 +69,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUpdated, onUnmounted } from 'vue';
 import timeMethod from '@/tools/time-method';
-import ChatMsgMenu from '@/components/chat-msg-menu.vue';
+import ChatContent from '@/components/chat-content.vue';
 import type { TMessage, TVoice } from '@/type';
 import Icon from '@/components/icon.vue';
 
@@ -267,7 +215,7 @@ const getMessage = () => {
 		}
 	},
 	{
-		"id": '28',
+		"id": '2843729847239',
 		"sendUserId": "20220328007",
 		"acceptUserId": "20220328001",
 		"type": "voice",
@@ -317,23 +265,7 @@ const showMsgTime = (data: any[]) => {
 	}
 };
 
-const changeTime = (time: string) => {
-	let space =
-		(new Date(timeMethod.timeFormat(time, "T")).getTime() -
-			new Date(timeMethod.getNowTime().split("T")[0] + "T00:00:00").getTime()) /
-		(1000 * 60 * 60 * 24);
-	let Time = timeMethod.timeFormat(time, " ").split(" ");
-	let week = timeMethod.getDateToWeek(time);
-	if (space > 0 && space < 1) {
-		return Time[1].slice(0, 5);
-	} else if (space > -1 && space < 0) {
-		return "昨天 " + Time[1].slice(0, 5);
-	} else if (space < -1 && Math.abs(space) < timeMethod.getDateToWeek(timeMethod.getNowTime()).weekID - 1) {
-		return week.weekName + " " + Time[1].slice(0, 5);
-	} else {
-		return Time[0].slice(5, 10) + " " + Time[1].slice(0, 5);
-	}
-};
+
 
 const getUserInfo = () => {
 	// 获取用户信息的逻辑
@@ -397,19 +329,10 @@ const readedMsg = () => {
 	// 标记消息已读的逻辑
 };
 
-const playSound = (url: string) => {
-	imgConf.value.replayChange = imgConf.value.replaing;
-	let music: UniApp.InnerAudioContext | null = uni.createInnerAudioContext();
-	music.src = url;
-	music.play();
-	music.onEnded(() => {
-		music = null;
-		imgConf.value.replayChange = imgConf.value.replay;
-	});
-};
 
-const cancelMsg = (id: number) => {
-	msgList.value.splice(id, 1);
+
+const cancelMsg = (idx: number) => {
+	msgList.value.splice(idx, 1);
 };
 
 const changeInputType = () => {
@@ -629,138 +552,7 @@ center {
 			padding-top: 23rpx;
 
 
-			.self {
-				justify-content: flex-end;
-				position: relative;
-			}
 
-			.Ai {
-				position: relative;
-			}
-
-			.item {
-				display: flex;
-				padding: 23rpx 30rpx;
-
-				.right {
-					background-color: $chatContentbgc;
-				}
-
-				.left {
-					background-color: #FFFFFF;
-				}
-
-				.right::after {
-					position: absolute;
-					display: inline-block;
-					content: '';
-					width: 0;
-					height: 0;
-					left: 100%;
-					top: 30rpx;
-					border: 12rpx solid transparent;
-					border-left: 12rpx solid $chatContentbgc;
-				}
-
-				.left::after {
-					position: absolute;
-					display: inline-block;
-					content: '';
-					width: 0;
-					height: 0;
-					top: 30rpx;
-					right: 100%;
-					border: 12rpx solid transparent;
-					border-right: 12rpx solid #FFFFFF;
-				}
-
-				.content-text {
-					position: relative;
-					max-width: 486rpx;
-					border-radius: 8rpx;
-					word-wrap: break-word;
-					padding: 20rpx 20rpx;
-					margin: 0 24rpx;
-					border-radius: 5px;
-					font-size: 32rpx;
-					font-family: PingFang SC;
-					font-weight: 500;
-					color: #333333;
-					line-height: 42rpx;
-				}
-
-				.content-img {
-					margin: 0 24rpx;
-				}
-
-				.content-video {
-					margin: 0 24rpx;
-				}
-
-				.img-style {
-					width: 400rpx;
-					height: auto;
-					border-radius: 10rpx;
-				}
-
-				.video-style {
-					width: 400rpx;
-					height: 400rpx;
-				}
-
-				.avatar {
-					display: flex;
-					justify-content: center;
-					width: 78rpx;
-					height: 78rpx;
-					background: $sendBtnbgc;
-					border-radius: 8rpx;
-					overflow: hidden;
-
-					image {
-						align-self: center;
-					}
-				}
-
-				.msg-menu {
-					min-width: 100rpx;
-					height: 100rpx;
-					display: none;
-					background: #383838;
-					position: absolute;
-					border-radius: 10rpx;
-					z-index: 100;
-
-					.tr-icon {
-						position: absolute;
-						top: 100rpx;
-						width: 0;
-						height: 0;
-						border: 15rpx solid transparent;
-						border-top: 15rpx solid #383838;
-					}
-
-					.tr-icon-left {
-						left: 15rpx;
-					}
-
-					.tr-icon-right {
-						right: 15rpx;
-					}
-				}
-
-				.menu-left {
-					top: -100rpx;
-					left: 120rpx;
-
-				}
-
-				.menu-right {
-					top: -100rpx;
-					right: 120rpx;
-				}
-
-			}
 		}
 
 		.msg-time {
